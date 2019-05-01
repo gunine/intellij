@@ -106,7 +106,7 @@ public final class BlazeExternalSyntheticLibrary extends SyntheticLibrary
     this.files =
         Streams.concat(oldFiles.stream(), computedFiles.stream()).collect(toImmutableList());
     if (updateValidFiles()) {
-      ExternalLibraryUpdater.getInstance(project).reindexRoots(project);
+      ExternalLibraryUpdater.getInstance(project).reindexRoots();
     }
   }
 

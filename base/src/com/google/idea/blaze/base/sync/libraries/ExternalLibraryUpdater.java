@@ -35,6 +35,7 @@ class ExternalLibraryUpdater implements ProjectComponent {
   private static final BoolExperiment reindexExternalSyntheticLibraryAfterUpdate =
       new BoolExperiment("reindex.external.synthetic.library.after.update", true);
 
+  private final Project project;
   private final FrameStateListener listener;
   private final Set<BlazeExternalSyntheticLibrary> externalLibraries;
 
@@ -43,6 +44,7 @@ class ExternalLibraryUpdater implements ProjectComponent {
   }
 
   ExternalLibraryUpdater(Project project) {
+    this.project = project;
     this.listener =
         new FrameStateListener() {
           @Override
@@ -58,7 +60,7 @@ class ExternalLibraryUpdater implements ProjectComponent {
                         updateHappened |= library.updateValidFiles();
                       }
                       if (updateHappened) {
-                        reindexRoots(project);
+                        reindexRoots();
                       }
                     });
           }
@@ -67,7 +69,7 @@ class ExternalLibraryUpdater implements ProjectComponent {
         Collections.newSetFromMap(new MapMaker().weakKeys().concurrencyLevel(1).makeMap());
   }
 
-  void reindexRoots(Project project) {
+  void reindexRoots() {
     if (!reindexExternalSyntheticLibraryAfterUpdate.getValue()) {
       return;
     }
@@ -83,6 +85,7 @@ class ExternalLibraryUpdater implements ProjectComponent {
   void addExternalLibrary(BlazeExternalSyntheticLibrary library) {
     externalLibraries.remove(library);
     externalLibraries.add(library);
+    reindexRoots();
   }
 
   @Override
